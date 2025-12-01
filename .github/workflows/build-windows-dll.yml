@@ -10,29 +10,35 @@ on:
 jobs:
   build-win32:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: cmd
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup MSVC 32-bit
+      - name: Setup MSVC (x86)
         uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '17.0'           # Visual Studio 2022
+          platform: x86                 # 关键：指定 32 位工具链
 
-      - name: Install Ninja
-        run: choco install ninja
+      - name: Configure CMake (Visual Studio 2022 Win32)
+        run: |
+          cmake -S . -B build ^
+            -G "Visual Studio 17 2022" ^
+            -A Win32 ^
+            -DCMAKE_BUILD_TYPE=Release
 
-      - name: Configure CMake (Win32)
-        run: >
-          cmake -S . -B build
-          -G "Ninja"
-          -DCMAKE_BUILD_TYPE=Release
-          -A Win32
+      - name: Build DLL (Release, Win32)
+        run: |
+          cmake --build build --config Release --verbose
 
-      - name: Build DLL
-        run: cmake --build build --config Release
+      - name: Copy DLL to root
+        run: copy build\Release\stream_info.dll stream_info.dll
 
-      - name: Upload DLL as artifact
+      - name: Upload DLL
         uses: actions/upload-artifact@v4
         with:
           name: stream_info-win32-dll
           path: stream_info.dll
-          if-no-files-found: error
