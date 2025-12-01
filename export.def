@@ -1,0 +1,5 @@
+; export.def
+LIBRARY stream_info
+EXPORTS
+GetAVStreamMemberInfo
+FreeAVStreamMemberInfo

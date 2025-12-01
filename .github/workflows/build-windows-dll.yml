@@ -1,4 +1,4 @@
-name: Build FFmpeg Info DLL (x86)
+name: Build Win32 DLL
 
 on:
   push:
@@ -8,42 +8,31 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_windows_dll_x86:
+  build-win32:
     runs-on: windows-latest
-    
-    steps:
-      - name: ⬇️ Checkout Repository
-        uses: actions/checkout@v4
 
-     # 使用 vcpkg 安装 FFmpeg 库
-      - name: Install FFmpeg using vcpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          # windows-latest 默认是 x64，我们指定 x86-windows 来构建 win32 DLL
-          # 如果需要 x64，请改为 x64-windows
-          vcpkgJsonGlob: 'vcpkg.json' # 需要在仓库根目录添加 vcpkg.json 文件
-          vcpkgTriplet: x86-windows     
-      - name: ⚙️ Configure CMake (x86)
-        shell: powershell
-        run: |
-          # *** 关键修改 2: 指定 CMake 生成器为 Win32 (Visual Studio 2022) ***
-          # 注意：Visual Studio 2022 或 2019 默认安装了 32 位工具链。
-          cmake -B build `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake `
-            -A Win32 # 指定目标架构为 32 位
-        
-      - name: 🏗️ Build DLL (x86)
-        # --config Release 是必须的，因为我们使用了多配置生成器 (Visual Studio)
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup MSVC 32-bit
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Install Ninja
+        run: choco install ninja
+
+      - name: Configure CMake (Win32)
+        run: >
+          cmake -S . -B build
+          -G "Ninja"
+          -DCMAKE_BUILD_TYPE=Release
+          -A Win32
+
+      - name: Build DLL
         run: cmake --build build --config Release
-        
-      - name: 📦 Upload DLL Artifact
+
+      - name: Upload DLL as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AVStreamInfoExtractor-DLL-Win32
-          path: build/Release/AVStreamInfoExtractor.dll # 路径保持不变
-          
-      - name: 📝 Show Build Details
-        run: |
-          echo "已成功构建 32 位 (Win32) DLL。"
-          # 可以使用 dumpbin /HEADERS 或 sigcheck 等工具验证文件架构
+          name: stream_info-win32-dll
+          path: stream_info.dll
+          if-no-files-found: error

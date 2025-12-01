@@ -1,9 +1,0 @@
-{
-  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "name": "avstream-layout",
-  "version-string": "1.0.0",
-  "dependencies": [
-    "ffmpeg"
-  ],
-  "builtin-baseline": "8d39f8605d6e2e2a096c4d8b6c00d6f2c7304192"
-}
