@@ -16,7 +16,7 @@ add_library(stream_info SHARED
     export.def
 )
 #包含你的 FFmpeg 头文件目录（请确保路径正确）
-target_include_directories(PRIVATE include)
+include_directories(PRIVATE include)
 
 # 设置 DLL 属性
 set_target_properties(stream_info PROPERTIES
