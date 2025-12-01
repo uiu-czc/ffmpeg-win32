@@ -510,6 +510,6 @@ const FFStructInfo* __cdecl GetFFmpegStructInfo(int* out_count) {
 }
 
 extern "C" __declspec(dllexport)
-void __cdecl FreeFFmpegStructInfo() {
+void __cdecl GetFFmpegStructInfo() {
     // 静态数组，无需释放
 }
