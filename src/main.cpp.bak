@@ -498,9 +498,7 @@ static const FFStructInfo g_structs[] = {
     { "AVPacket", avpacket_members, (int)(sizeof(avpacket_members) / sizeof(FFMemberInfo)) },
     { "AVFrame", avframe_members, (int)(sizeof(avframe_members) / sizeof(FFMemberInfo)) },
     { "AVCodec", avcodec_members, (int)(sizeof(avcodec_members) / sizeof(FFMemberInfo)) },
-    { "AVIOContext", avioctx_members, (int)(sizeof(avioctx_members) / sizeof(FFMemberInfo)) },
-    { "AVOutputFormat", avoutputformat_members, (int)(sizeof(avoutputformat_members) / sizeof(FFMemberInfo)) },
-    { "AVInputFormat", avinputformat_members, (int)(sizeof(avinputformat_members) / sizeof(FFMemberInfo)) }
+    { "AVIOContext", avioctx_members, (int)(sizeof(avioctx_members) / sizeof(FFMemberInfo)) }
 };
 
 // ========== DLL 导出函数 ==========
