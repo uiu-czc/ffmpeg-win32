@@ -12,7 +12,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 # 包含你的 FFmpeg 头文件目录（请确保路径正确）
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/ffmpeg
 )
 
 # 创建共享库（DLL）
