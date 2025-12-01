@@ -502,14 +502,7 @@ static const FFStructInfo g_structs[] = {
 
 // ========== DLL 导出函数 ==========
 extern "C" __declspec(dllexport)
-const FFStructInfo* __cdecl GetFFmpegStructInfo(int* out_count) {
-    if (out_count) {
-        *out_count = (int)(sizeof(g_structs) / sizeof(FFStructInfo));  // 10
-    }
+const FFStructInfo* __cdecl GetFFmpegStructInfo() {
     return g_structs;
 }
 
-extern "C" __declspec(dllexport)
-void __cdecl GetFFmpegStructInfo() {
-    // 静态数组，无需释放
-}
