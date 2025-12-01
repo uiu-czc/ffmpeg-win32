@@ -1,0 +1,9 @@
+{
+  "default-registry": {
+    "kind": "git",
+    "repository": "https://github.com/microsoft/vcpkg",
+    // *** 关键行: 指定一个稳定的 vcpkg Git 提交 ID 作为基线 ***
+    // 推荐使用一个相对较新的稳定提交 ID。
+    "baseline": "a794c16dd9e668c6a08605c30b206775317730e2" 
+  }
+}
