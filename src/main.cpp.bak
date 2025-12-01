@@ -394,7 +394,7 @@ static const FFMemberInfo avframe_members[] = {
     MEMBER(AVFrame, best_effort_timestamp),
     MEMBER(AVFrame, metadata),
     MEMBER(AVFrame, decode_error_flags),
-    MEMBER(AVFrame, hw_frames_ctx), 
+    MEMBER(AVFrame, hw_frame_ctx), 
     MEMBER(AVFrame, opaque_ref),
     MEMBER(AVFrame, crop_top),
     MEMBER(AVFrame, crop_bottom),
