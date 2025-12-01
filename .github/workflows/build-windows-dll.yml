@@ -1,5 +1,4 @@
-# .github/workflows/build-windows-dll.yml
-name: Build Windows DLL
+name: Build FFmpeg Info DLL (x86)
 
 on:
   push:
@@ -9,52 +8,40 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-windows:
+  build_windows_dll_x86:
     runs-on: windows-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
-    - name: Setup MSVC
-      uses: microsoft/setup-msbuild@v1.1
-      
-    - name: Install FFmpeg (vcpkg)
-      run: |
-        git clone https://github.com/Microsoft/vcpkg.git
-        cd vcpkg
-        .\bootstrap-vcpkg.bat
-        .\vcpkg integrate install
-        .\vcpkg install ffmpeg:x86-windows-static-md
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v4
         
-    - name: Configure CMake
-      run: |
-        mkdir build
-        cd build
-        cmake .. -G "Visual Studio 17 2022" -A Win32 ^
-          -DCMAKE_TOOLCHAIN_FILE="../vcpkg/scripts/buildsystems/vcpkg.cmake" ^
-          -DVCPKG_TARGET_TRIPLET=x86-windows-static-md
+      - name: 🛠️ Install vcpkg (x86)
+        uses: lukka/run-vcpkg@v11
+        with:
+          # *** 关键修改 1: 指定 vcpkg 三元组为 x86-windows ***
+          vcpkgArguments: 'ffmpeg:x86-windows-static'
           
-    - name: Build DLL
-      run: |
-        cd build
-        msbuild AVStreamAnalyzer.sln /p:Configuration=Release /p:Platform=Win32
+      - name: ⚙️ Configure CMake (x86)
+        shell: powershell
+        run: |
+          # *** 关键修改 2: 指定 CMake 生成器为 Win32 (Visual Studio 2022) ***
+          # 注意：Visual Studio 2022 或 2019 默认安装了 32 位工具链。
+          cmake -B build `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake `
+            -A Win32 # 指定目标架构为 32 位
         
-    - name: Package artifacts
-      run: |
-        mkdir -p artifacts
-        copy build\bin\Release\avstream_analyzer.dll artifacts\
-        copy build\bin\Release\avstream_analyzer.lib artifacts\
-        copy avstream_analyzer.h artifacts\
+      - name: 🏗️ Build DLL (x86)
+        # --config Release 是必须的，因为我们使用了多配置生成器 (Visual Studio)
+        run: cmake --build build --config Release
         
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: avstream-analyzer-dll
-        path: artifacts/
-        
-    - name: Create release (optional)
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: artifacts/*
+      - name: 📦 Upload DLL Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AVStreamInfoExtractor-DLL-Win32
+          path: build/Release/AVStreamInfoExtractor.dll # 路径保持不变
+          
+      - name: 📝 Show Build Details
+        run: |
+          echo "已成功构建 32 位 (Win32) DLL。"
+          # 可以使用 dumpbin /HEADERS 或 sigcheck 等工具验证文件架构

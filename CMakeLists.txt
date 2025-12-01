@@ -1,30 +1,31 @@
-# CMakeLists.txt
 cmake_minimum_required(VERSION 3.10)
-project(AVStreamAnalyzer)
+project(AVStreamInfoExtractor C)
 
-set(CMAKE_CXX_STANDARD 17)
-
-# 查找FFmpeg库
+# 查找 FFmpeg 库
+# 你需要确保你的构建环境中已安装 FFmpeg 开发库，或者在 CMake 脚本中指定它们的路径。
+# 以下是针对 vcpkg 或系统安装库的一般查找方式。
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FFMPEG REQUIRED libavformat libavutil)
 
-# 设置包含目录
-include_directories(${FFMPEG_INCLUDE_DIRS})
+# 定义要构建的共享库 (DLL)
+add_library(AVStreamInfoExtractor SHARED struct_info_extractor.c)
 
-# 添加DLL项目
-add_library(avstream_analyzer SHARED avstream_analyzer.cpp)
+# 设置目标属性
+set_target_properties(AVStreamInfoExtractor PROPERTIES
+    # 在 Windows 上自动添加 .dll 后缀
+    # 在 Windows 上，我们希望输出文件名为 AVStreamInfoExtractor.dll
+    OUTPUT_NAME "AVStreamInfoExtractor"
+    # 在 Windows 上设置 DLL 导出符号
+    # 这里通过上面的宏 EXPORT_API 来控制
+    C_FLAGS "${C_FLAGS} -D_WIN32"
+)
 
-# 链接FFmpeg库
-target_link_libraries(avstream_analyzer ${FFMPEG_LIBRARIES})
+# 链接 FFmpeg 库
+target_link_libraries(AVStreamInfoExtractor PUBLIC
+    ${FFMPEG_LDFLAGS}
+)
 
-# Windows特定设置
-if(WIN32)
-    target_compile_definitions(avstream_analyzer PRIVATE 
-        FFMPEG_STATIC
-        _CRT_SECURE_NO_WARNINGS)
-    
-    # 设置输出目录
-    set_target_properties(avstream_analyzer PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-endif()
+# 包含 FFmpeg 头文件
+target_include_directories(AVStreamInfoExtractor PUBLIC
+    ${FFMPEG_INCLUDE_DIRS}
+)
