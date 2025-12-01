@@ -14,13 +14,15 @@ jobs:
     steps:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@v4
-        
-      - name: 🛠️ Install vcpkg (x86)
+
+     # 使用 vcpkg 安装 FFmpeg 库
+      - name: Install FFmpeg using vcpkg
         uses: lukka/run-vcpkg@v11
         with:
-          # *** 关键修改 1: 指定 vcpkg 三元组为 x86-windows ***
-          vcpkgArguments: 'ffmpeg:x86-windows-static'
-          
+          # windows-latest 默认是 x64，我们指定 x86-windows 来构建 win32 DLL
+          # 如果需要 x64，请改为 x64-windows
+          vcpkgJsonGlob: 'vcpkg.json' # 需要在仓库根目录添加 vcpkg.json 文件
+          vcpkgTriplet: x86-windows     
       - name: ⚙️ Configure CMake (x86)
         shell: powershell
         run: |
