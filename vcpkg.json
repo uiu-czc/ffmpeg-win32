@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "avstream-analyzer",
+  "version": "1.0.0",
+  "description": "A tool to analyze FFmpeg AVStream struct layout.",
+  "dependencies": [
+    {
+      "name": "ffmpeg",
+      "default-features": false,
+      "features": ["avformat", "avutil", "core"]
+    }
+  ]
+}
