@@ -11,7 +11,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
 # 包含你的 FFmpeg 头文件目录（请确保路径正确）
-target_include_directories(${PROJECT_NAME} PRIVATE 
+target_include_directories( PRIVATE 
     include
 )
 
